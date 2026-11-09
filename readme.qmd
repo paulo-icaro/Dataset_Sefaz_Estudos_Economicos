@@ -35,12 +35,12 @@ editor: source
 
 | **Script** | **Fonte** | **Descrição** | **Tratamentos Aplicados** |
 |:-----------|:----------|:--------------|:--------------------------|
-| ICMS_Dataset.R | Sefaz-CE | Dados de Arrecadação de ICMS | Ajuste da Frequência e Correção Monetária |
-| Siof_Dataset.R | Seplag | Dados de Investimentos Públicos no Ceará | Ajuste da Frequência e Correção Monetária |
-| Siconfi_Dataset.R | Siconfi | Acesso a dados dos relatórios RREO | Correção Monetária |
-| Bacen_Dataset | Banco Central (SGS) | Acesso a variáveis macroeconômicas | Ajuste da Frequência e Correção Monetária |
-| Ipeadata_Dataset | Instit. Ipea (Ipeadata) | Acesso a variáveis macroeconômicas | Ajuste da Frequência |
-| Employment Dataset | Minist. Trabalho (MTE) | Construção da série de estoque empregos estimada e salário médio | Ajuste da Frequência e Correção Monetária |
+| [ICMS_Dataset.R](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/ICMS_Dataset.R) | Sefaz-CE | Dados de Arrecadação de ICMS | Ajuste da Frequência e Correção Monetária |
+| [Siof_Dataset.R](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Siof_Dataset.R) | Seplag | Dados de Investimentos Públicos no Ceará | Ajuste da Frequência e Correção Monetária |
+| [Siconfi_Dataset.R](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Siconfi_Dataset.R) | [Siconfi](https://apidatalake.tesouro.gov.br/docs/siconfi/) | Acesso a dados dos relatórios RREO | Correção Monetária |
+| [Bacen_Dataset](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Bacen_Dataset.R) | Banco Central ([SGS](https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries)) | Acesso a variáveis macroeconômicas | Ajuste da Frequência e Correção Monetária |
+| [Ipeadata_Dataset](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Ipeadata_Dataset.R) | Instit. Ipea ([Ipeadata](https://www.ipeadata.gov.br/Default.aspx)) | Acesso a variáveis macroeconômicas | Ajuste da Frequência |
+| [Employment Dataset](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Employment_Dataset.R) | Minist. Trabalho (MTE) | Construção da série de estoque empregos estimada e salário médio | Ajuste da Frequência e Correção Monetária |
 
 
 
