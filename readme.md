@@ -15,7 +15,7 @@ Paulo Icaro
       Este repositório contém todas as rotinas de tratamento final
 responsáveis por estruturar o conjunto de dados que municiam os modelos
 de análise do impacto do investimento público sobre a arrecadação de
-ICMS.\
+ICMS.  
       A tabela a seguir resume informações referentes aos scripts:
 
 </p>
@@ -25,7 +25,7 @@ ICMS.\
 | [ICMS_Dataset.R](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/ICMS_Dataset.R) | Sefaz-CE | Dados de Arrecadação de ICMS | Ajuste da Frequência e Correção Monetária |
 | [Siof_Dataset.R](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Siof_Dataset.R) | Seplag | Dados de Investimentos Públicos no Ceará | Ajuste da Frequência e Correção Monetária |
 | [Siconfi_Dataset.R](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Siconfi_Dataset.R) | [Siconfi](https://apidatalake.tesouro.gov.br/docs/siconfi/) | Acesso a dados dos relatórios RREO | Correção Monetária |
-| [Bacen_Dataset](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Bacen_Dataset.R) | Banco Central ([SGS](https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries)) | Acesso a variáveis macroeconômicas | Ajuste da Frequência e Correção Monetária |
+| [Bacen_Dataset](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/notas/Bacen_Dataset.md) | Banco Central ([SGS](https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries)) | Acesso a variáveis macroeconômicas | Ajuste da Frequência e Correção Monetária |
 | [Ipeadata_Dataset](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Ipeadata_Dataset.R) | Instit. Ipea ([Ipeadata](https://www.ipeadata.gov.br/Default.aspx)) | Acesso a variáveis macroeconômicas | Ajuste da Frequência |
 | [Employment Dataset](https://github.com/paulo-icaro/Dataset_Sefaz_Estudos_Economicos/blob/main/Employment_Dataset.R) | Minist. Trabalho (MTE) | Construção da série de estoque empregos estimada e salário médio | Ajuste da Frequência e Correção Monetária |
 
@@ -42,10 +42,10 @@ quase todos os scripts. O fato da maioria dos dados ser de frequência
 mensal implica que o ajuste de frequência é necessário. Para valores
 monetários, é importante reajustá-los de acordo com a inflação. Para
 cada um dos procedimentos, respectivamente, as funções
-[**frequency_transforming**](https://github.com/paulo-icaro/Variables_Frequency_Transforming)
+[**cumulative_transform**](https://github.com/paulo-icaro/Variables_Frequency_Transforming)
 e
 [**value_updating**](https://github.com/paulo-icaro/Update_Variables_Actual_Value)
-são aplicadas.\
+são aplicadas.  
       Além dos tratamentos mencionados, a depender de como cada base de
 dados se apresenta, será necessário `verticalizar` ou `matricizar` as
 informações. Tal procedimento é importante para a etapa de armazenamento
