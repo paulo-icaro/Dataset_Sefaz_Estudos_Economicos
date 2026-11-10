@@ -49,7 +49,69 @@ editor: source
 <!------------->
 ## Tratamentos Implementados
 |       Apesar de distintos, os scripts possuem etapas estão presentes em quase todos os scripts. O fato da maioria dos dados ser de frequência mensal implica que o ajuste de frequência é necessário. Para valores monetários, é importante reajustá-los de acordo com a inflação. Para cada um dos procedimentos, respectivamente, as funções [**cumulative_transform**](https://github.com/paulo-icaro/Variables_Frequency_Transforming) e [**value_updating**](https://github.com/paulo-icaro/Update_Variables_Actual_Value) são aplicadas.
-|       Além dos tratamentos mencionados, a depender de como cada base de dados se apresenta, será necessário `verticalizar` ou `matricizar` as informações. Tal procedimento é importante para a etapa de armazenamento dos dados já tratados, uma vez que os *outputs* são gerados de forma a atender a necessidade de usá-los tanto para os dashboards elaborados em Tableau quanto para as análises econômicas feitas no Matlab.
+|       Além dos tratamentos mencionados, a depender de como cada base de dados se apresenta, será necessário **"verticalizar"** ou **"matricizar"** as informações. Uma base de dados **matricial** é assim chamada quando cada coluna representa uma série temporal. Por outro lado, uma base de dados **vertical** ocorre quando as séries temporais passam a ser identificadas por meio de uma única coluna de nomes de séries e os valores ficam agrupados sob uma coluna de valores. 
+
+Vejamos uma base de dados no formato **matricial**:
+</p>
+
+```{r}
+#| label: Base de Dados Matricial x Vertical - Parte 1
+#| echo: FALSE
+#| warning: FALSE
+#| eval: TRUE
+
+
+# ----------------------------- #
+# --- Bibliotecas e Scripts --- #
+# ----------------------------- #
+source('https://raw.githubusercontent.com/paulo-icaro/Variables_Frequency_Transforming/refs/heads/main/variables_frequency_transforming.R')
+source('https://raw.githubusercontent.com/paulo-icaro/Update_Variables_Actual_Value/refs/heads/main/update_actual_value.R')
+source('https://raw.githubusercontent.com/paulo-icaro/Bacen_API/main/bacen_query.R')
+library(tidyr)
+library(openxlsx)
+
+
+
+# ========================= #
+# === Extração de Dados === #
+# ========================= #
+
+# --- Informações Prévias --- #
+cod_bacen_series = c('4189', '3697', '433')
+name_bacen_series = c('selic_acum_anual', 'tx_cambio_mp', 'inflação_ipca')
+start_date = '01/01/2015'
+end_date = '31/12/2025'
+
+# --- Extracao --- #
+bacen_dataset_m = bacen_query(cod_bacen_series, name_bacen_series, start_date, end_date)
+
+
+# ====================== #
+# === Base Matricial === #
+# ====================== #
+head(bacen_dataset_m, n = 10)
+```
+
+<p>
+A seguir temos um exemplo de uma base de dados no formato **vertical**:
+</p>
+```{r}
+#| label: Base de Dados Matricial x Vertical - Parte 2
+#| echo: FALSE
+#| warning: FALSE
+#| eval: TRUE
+
+
+# ===================== #
+# === Base Vertical === #
+# ===================== #
+bacen_dataset_t = pivot_longer(data = bacen_dataset_m, cols = !starts_with(c('data')), names_to = 'variavel', values_to = 'valor')
+head(bacen_dataset_t, n = 10)
+```
+
+<p>
+|       Tal procedimento é importante para a etapa de armazenamento dos dados já tratados, uma vez que os *outputs* são gerados de forma a atender a necessidade de usá-los tanto para os dashboards elaborados em Tableau quanto para as análises econômicas feitas no Matlab.
+</p>
 
 
 
