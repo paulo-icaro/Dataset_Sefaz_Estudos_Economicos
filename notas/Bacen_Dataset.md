@@ -1,0 +1,45 @@
+# Bacen Dataset
+Paulo Icaro
+2026-11-09
+
+<!------------->
+
+<!-- Parte 1 -->
+
+<!------------->
+
+## Objetivo
+
+<p>
+
+      Este tutorial mostra como é realizada a extração e tratamento de
+séries macroeconômicas disponíveis na
+[API](https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries)
+do Banco Central.
+
+</p>
+
+<!------------->
+
+<!-- Parte 2 -->
+
+<!------------->
+
+## Bibliotecas e *Scripts* Auxiliares
+
+<p>
+
+      Esta rotina faz uso das bibliotecas
+[tidyr](https://tidyr.tidyverse.org/) e
+[openxlsx](https://cran.r-project.org/web/packages/openxlsx/index.html)
+para modelagem de conjunto de dados e leitura/criação de arquivos Excel,
+respectivamente.  
+      Além das bibliotecas, os seguintes *scripts* são fundamentais para
+o funcionamento dessa rotina:
+
+- [bacen_query](https://github.com/paulo-icaro/Bacen_API/blob/main/readme_pt_br.md):
+  realizar consultas aos dados disponíveis na API do Banco Central;
+- [cumulative_transform](https://github.com/paulo-icaro/Variables_Frequency_Transforming)
+- [**value_updating**](https://github.com/paulo-icaro/Update_Variables_Actual_Value)
+
+</p>
