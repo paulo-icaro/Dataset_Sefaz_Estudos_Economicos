@@ -58,6 +58,7 @@ Vejamos uma base de dados no formato **matricial**:
 #| label: Base de Dados Matricial x Vertical - Parte 1
 #| echo: FALSE
 #| warning: FALSE
+#| message: FALSE
 #| eval: TRUE
 
 
@@ -99,6 +100,7 @@ A seguir temos um exemplo de uma base de dados no formato **vertical**:
 #| label: Base de Dados Matricial x Vertical - Parte 2
 #| echo: FALSE
 #| warning: FALSE
+#| message: FALSE
 #| eval: TRUE
 
 
