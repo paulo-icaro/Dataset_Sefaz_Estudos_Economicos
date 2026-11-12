@@ -95,8 +95,11 @@ source('https://raw.githubusercontent.com/paulo-icaro/Update_Variables_Actual_Va
 #| message: FALSE
 #| eval: TRUE
 
-state_municipalities = read_excel(path = '
-C:/Users/paulo/Documents/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
+#state_municipalities = read_excel(path = 'C:/Users/paulo/Documents/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
+
+state_municipalities = read_excel(path = '/home/pauloicaro/Documentos/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
+
+
 ```
 
 ```{r}
