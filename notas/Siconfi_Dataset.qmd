@@ -95,9 +95,9 @@ source('https://raw.githubusercontent.com/paulo-icaro/Update_Variables_Actual_Va
 #| message: FALSE
 #| eval: TRUE
 
-#state_municipalities = read_excel(path = 'C:/Users/paulo/Documents/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
+state_municipalities = read_excel(path = 'C:/Users/paulo/Documents/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
 
-state_municipalities = read_excel(path = '/home/pauloicaro/Documentos/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
+#state_municipalities = read_excel(path = '/home/pauloicaro/Documentos/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
 
 
 ```
@@ -124,18 +124,262 @@ siconfi_dataset_est = siconfi_rreo_query(ano, bimestre, tipo_demonstrativo, c('0
 siconfi_dataset_mun = siconfi_rreo_query(2024:2025, bimestre, tipo_demonstrativo, c('01'), 'M', state_municipalities$`Cod. 7 Digitos`, TRUE)
 ```
 
-
 ```{r}
 #| label: Extração - Prints
 #| echo: FALSE
 #| warning: FALSE
 #| message: FALSE
 #| eval: TRUE
+
+
 # --- Prints --- #
 tail(siconfi_dataset_est, n = 10)
 tail(siconfi_dataset_mun, n = 10)
 ```
 
 <p>
-Note que para a extração dos dados municipais foi necessário acessar uma planilha auxiliar^(O trecho de leitura da planilha foi colocado como um comentário em razão da maneira como essa documentação foi montada. No entanto ao executar em sua máquina, basta remover o comentário e tudo funcionará normalmente.) (Lista_Municipios_Brasil.xlsx) contendo toda a lista de múnicipios do estado.
+Note que para a extração dos dados municipais foi necessário acessar uma planilha auxiliar^[O trecho de leitura da planilha foi colocado como um comentário em razão da maneira como essa documentação foi montada. No entanto ao executar em sua máquina, basta remover o comentário e tudo funcionará normalmente.], Lista_Municipios_Brasil.xlsx, contendo toda a lista de múnicipios do estado.
 </p>
+
+
+<!------------->
+<!-- Parte 4 -->
+<!------------->
+## Seleção dos Dados
+
+### Filtros Gerais
+<p>
+|       Das variáveis escolhidas para compor o conjunto de informações do Siconfi, estão:
+* Resultado Previdenciário Bruto
+* Dívida Consolidada Líquida Bruta
+* Resultado Primário Bruto
+* Investimento Municipal Bruto
+
+|       Cada uma dessas variáveis possuem filtros devidamente aplicados para chegar nos valores iniciais, como pode ser visto a seguir.
+</p>
+
+```{r}
+#| label: Seleção - Parte 1
+#| echo: TRUE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+
+# ---------------------- #
+# --- Filtros Gerais --- #
+# ---------------------- #
+
+# --- Resultado Previdenciário --- #
+resultado_previdenciario_bruto = ajuste_data_siconfi(siconfi_dataset_est[c(1, 3, 9, 12, 13, 14, 15)]) %>%
+  filter(str_detect(conta, 'RESULTADO PREVIDENCIÁRIO'), str_detect(anexo, '04'))
+
+# --- Dívida Consolidada Líquida --- #
+divida_consolidada_liquida_bruto = ajuste_data_siconfi(siconfi_dataset_est[c(1, 3, 9, 12, 13, 14, 15)]) %>%
+  filter(str_detect(conta, 'DÍVIDA CONSOLIDADA LÍQUIDA'), str_detect(anexo, '06'))
+
+# --- Resultado Primário --- #
+resultado_primario_bruto = ajuste_data_siconfi(siconfi_dataset_est[c(1, 3, 9, 12, 13, 14, 15)]) %>%
+  filter(str_detect(conta, 'RESULTADO PRIMÁRIO'), str_detect(anexo, '06'))
+
+# --- Investimento Municipal --- #
+investimento_municipal_bruto = ajuste_data_siconfi(siconfi_dataset_mun[c(1, 3, 5, 9, 12, 13, 14, 15)]) %>%
+  filter(str_detect(conta, 'INVESTIMENTOS'), str_detect(anexo, '01'))
+```
+
+
+
+### Filtros Específicos
+<p>
+|       Feitos os filtros iniciais, é hora de definir melhor a busca pelas rubricas desejadas. Nessa parte não há um padrão de seleção a ser seguido, dado que as rubricas não possuem a nomenclatura padronizada e que podem mudar de ano para ano. Contudo, vale a pena atentar em **um ponto que elas tem em comum:  o tipo da conta**. Na grande maioria dos casos foi considerada a rubrica genérica **Despesas pagas até o bimestre**. Vejamos:
+</p>
+
+```{r}
+#| label: Seleção - Parte 2
+#| echo: TRUE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+
+# --------------------------- #
+# --- Filtros Especificos --- #
+# --------------------------- #
+
+# --- Resultado Previdenciário Pago (Acumulado do Bimestre) --- #
+resultado_previdenciario =
+  resultado_previdenciario_bruto %>%
+  filter(conta %in% c('RESULTADO PREVIDENCIÁRIO - FUNDO EM REPARTIÇÃO (XI) = (IX ¿ X)'),
+         str_detect(coluna, 'DESPESAS PAGAS ATÉ O BIMESTRE')) %>%
+  mutate('res_prev' = ifelse(periodo == 1, valor, valor - lag(valor)))
+
+# --- Dívida Consolidada Líquida (Até o Bimestre) --- #
+divida_consolidada_liquida =
+  divida_consolidada_liquida_bruto %>%
+  filter(conta %in% c('DÍVIDA CONSOLIDADA LÍQUIDA (XXXI) = (XXVIII - XXIX)',
+                      'DÍVIDA CONSOLIDADA LÍQUIDA (XLII) = (XXXIX - XL)') & str_detect(coluna, 'Até o Bimestre'))
+colnames(divida_consolidada_liquida)[7] = 'div_cons'
+
+# --- Resultado Primário (Acumulado no Ano) --- #
+resultado_primario =
+  resultado_primario_bruto %>%
+  filter(conta %in% c('RESULTADO PRIMÁRIO (SEM RPPS) - Acima da Linha (XXXV) = (XVIIa - (XXXIIIa +XXXIIIb + XXXIIIc))'),
+         str_detect(coluna, regex('VALOR'))) %>%
+  mutate('res_prim' = ifelse(periodo == 1, valor, valor - lag(valor)))
+
+# --- Investimento Municipal --- # 
+investimento_municipal =
+  investimento_municipal_bruto %>%
+  filter(conta %in% c('INVESTIMENTOS'),
+         str_detect(coluna, 'DESPESAS PAGAS ATÉ O BIMESTRE')) %>%
+  group_by(data) %>%
+  select(data, exercicio, periodo, valor) %>%
+  summarize('inv_mun_acum' = sum(valor)) %>%
+  mutate('inv_mun' = ifelse(substr(data, 6, 6) == 1, inv_mun_acum, inv_mun_acum - lag(inv_mun_acum)))
+```
+
+
+```{r}
+#| label: Seleção - Prints
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+
+# --- Prints --- #
+tail(resultado_previdenciario, n = 10)
+tail(divida_consolidada_liquida, n = 10)
+tail(resultado_primario, n = 10)
+tail(investimento_municipal, n = 10)
+```
+
+
+
+<!------------->
+<!-- Parte 4 -->
+<!------------->
+## Processamento de Dados
+<p>
+|       Extraído as informações, estas já estão na forma matricial. Além disso, deve-se lembrar que os dados já são bimestrais, dispensando qualquer ajuste de frequência. Dito isto, os seguintes procedimentos foram realizados nos dados:
+* **Junção das bases**: por através de técnicas de *join*, as bases foram todas combinadas;
+* **Atualização dos valores monetários**:  todos os valores monetários foram atualizados para o período 2025/12;
+* **Concatenação da base em termos reais e nominais**: as bases reais e nominais foram combinadas, tendo agora uma variável categórica indicado se está sendo usado valor real ou nominal;
+* **Verticalização da base de dados**: os dados passam pelo processo de "verticalização" para atender aos padrões do Tableau.
+</p>
+
+
+
+```{r}
+#| label: Processamento - Parte 1
+#| echo: TRUE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+
+# ============================== #
+# === Processamento de Dados === #
+# ============================== #
+
+# ------------------------ #
+# --- Unindo Variaveis --- #
+# ------------------------ #
+# Obs: Ajuste de acordo com o maior dataframe
+siconfi_macro_bimonthly_curr_m = 
+  divida_consolidada_liquida[c('data', 'div_cons')] %>%
+  left_join(y = resultado_previdenciario[c('data', 'res_prev')], by = 'data') %>%
+  left_join(y = resultado_primario[c('data', 'res_prim')], by = 'data') %>%
+  left_join(y = investimento_municipal[c('data', 'inv_mun')], by = 'data') %>%
+  mutate(res_prim_prev = res_prev + res_prim)
+
+# ----------------------------------------- #
+# --- Atualizacao de Valores Monetarios --- #
+# ----------------------------------------- #
+siconfi_macro_bimonthly_actual_m = value_updating(series = siconfi_macro_bimonthly_curr_m, variables = colnames(select(siconfi_macro_bimonthly_curr_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+
+# --------------------------------------------- #
+# --- Base Final - Valores Nominais e Reais --- #
+# --------------------------------------------- #
+siconfi_macro_bimonthly_m = rbind(siconfi_macro_bimonthly_curr_m |> mutate(tipo_preco = 'nominal'), siconfi_macro_bimonthly_actual_m |> mutate(tipo_preco = 'real'))
+
+# ------------------------------- #
+# --- Verticalizando os Dados --- #
+# ------------------------------- #
+siconfi_macro_bimonthly_t = pivot_longer(data = siconfi_macro_bimonthly_m, cols = !starts_with(c('data', 'tipo_preco')), names_to = 'variavel', values_to = 'valor')
+```
+
+<p>
+|       A execução da rotina irá, portanto, gerar *outputs* para ambos os padrões de dados. Padrão Tableau:
+</p>
+
+```{r}
+#| label: Processamento - Parte 2
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+tail(siconfi_macro_bimonthly_t, n = 10)
+```
+
+<p>
+e padrão Matlab:
+</p>
+
+```{r}
+#| label: Processamento - Parte 3
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+tail(siconfi_macro_bimonthly_t, n = 10)
+```
+
+
+
+<!------------->
+<!-- Parte 5 -->
+<!------------->
+## Armazenamento
+
+<p>
+|       Os resultados gerados são armazenados em dois diretórios distintos. Considerando o caminho base do diretório de armazenamento `Databases/Outputs/`, os resultados podem ser armazenados nas pastas *Tableau* ou *Matlab*  a depender do padrão do *output* gerado.
+|       Assim, para essa rotina, os *paths* de armazenamento serão `Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.
+</p>
+
+```{r}
+#| label: Armazenamento
+#| echo: TRUE
+#| warning: FALSE
+#| message: FALSE
+#| eval: FALSE
+
+# ==================================== #
+# === Armazenamento dos Resultados === #
+# ==================================== #
+
+# --- Pre Definicoes --- #
+save_path = c('Databases/Outputs/Tableau/db_siconfi_tableau', 'Databases/Outputs/Matlab/db_siconfi_matlab')
+formato = c('tableau', 'matlab')
+aba = c('siconfi_macro')
+dataframe = list(
+  tableau = list(siconfi_macro_bimonthly_t),
+  matlab = list(siconfi_macro_bimonthly_m)
+)
+
+# --- Armazenamento --- #
+for(f in seq_along(formato)){
+  wb = createWorkbook(creator = 'Sefaz-CE')
+  for(s in seq_along(aba)){
+    addWorksheet(wb = wb, sheetName = aba[s])
+    writeData(wb = wb, sheet = aba[s], x = as.data.frame(dataframe[[f]][s]), rowNames = FALSE, colNames = TRUE)
+  }
+  if(formato[f] == 'matlab'){
+    addWorksheet(wb = wb, sheetName = 'tempo')
+    writeData(wb = wb, sheet = 'tempo', as.numeric(siconfi_macro_bimonthly_m$data) + 25569, rowNames = FALSE)
+  }
+  saveWorkbook(wb = wb, file = paste0(save_path[f], '.xlsx'), overwrite = TRUE)
+}
+```
