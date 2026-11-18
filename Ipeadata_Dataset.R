@@ -43,9 +43,13 @@ ipeadata_dataset_m = ipeadata_dataset_m %>% filter(substr(data, 1, 4) != '2014')
 
 
 
-# =========================================== #
-# == Tranformacao da Frequencia dos Dados === #
-# =========================================== #
+# ============================== #
+# === Processamento de Dados === #
+# ============================== #
+
+# ------------------------------------------- #
+# -- Tranformacao da Frequencia dos Dados --- #
+# ------------------------------------------- #
 #ipeadata_dataset_bimonthly_sum = cumulative_transform('soma', 'bimestral', ipeadata_dataset[c(1,3)])
 ipeadata_dataset_bimonthly_end_m = cumulative_transform('periodo_final', 'bimestral', ipeadata_dataset_m[c(1,2)])
 ipeadata_dataset_bimonthly_cum_m = cumulative_transform('tx_acumulada', 'bimestral', ipeadata_dataset_m[c(1,3)])
@@ -53,9 +57,9 @@ ipeadata_dataset_bimonthly_m = left_join(x = ipeadata_dataset_bimonthly_end_m, y
 
 
 
-# =============================== #
-# === Verticalizando os Dados === #
-# =============================== #
+# ------------------------------- #
+# --- Verticalizando os Dados --- #
+# ------------------------------- #
 ipeadata_dataset_t = pivot_longer(data = ipeadata_dataset_m, cols = !starts_with('data'), names_to = 'variavel', values_to = 'valor')
 ipeadata_dataset_bimonthly_t = pivot_longer(data = ipeadata_dataset_bimonthly_m, cols = !starts_with('data'), names_to = 'variavel', values_to = 'valor')
 
