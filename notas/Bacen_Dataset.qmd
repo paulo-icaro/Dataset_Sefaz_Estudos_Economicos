@@ -88,7 +88,6 @@ library(openxlsx)
 | Saldo Total das Operações de Crédito do SFN para o Estado do Ceará | 14061 |
 
 |       É valido mencionar que procedimentos como ajuste na formatação das datas e transformação dos valores para padrão numérico foram implementadas no conjunto de dados. Tais correções visam garantir o pleno funcionamento da base de dados nas etapas a seguir.
-
 </p>
 
 ```{r}

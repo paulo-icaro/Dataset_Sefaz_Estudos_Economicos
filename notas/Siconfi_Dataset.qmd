@@ -39,7 +39,7 @@ editor: source
 <!------------->
 ## Bibliotecas e *Scripts* Auxiliares
 <p>
-|       Esta rotina faz uso das bibliotecas [dplyr](https://dplyr.tidyverse.org/) para manipulações na base de dados, [stringr](https://stringr.tidyverse.org/) para manipulação textual, [readxl](https://readxl.tidyverse.org/) e  [openxlsx](https://cran.r-project.org/web/packages/openxlsx/index.html) para modelagem de conjunto de dados e leitura/criação de arquivos Excel.
+|       Esta rotina faz uso das bibliotecas [tidyr](https://tidyr.tidyverse.org/) e [dplyr](https://dplyr.tidyverse.org/) para manipulações na base de dados, [stringr](https://stringr.tidyverse.org/) para manipulação textual, [readxl](https://readxl.tidyverse.org/) e  [openxlsx](https://cran.r-project.org/web/packages/openxlsx/index.html) para modelagem de conjunto de dados e leitura/criação de arquivos Excel.
 |       Além das bibliotecas, os seguintes *scripts* são essenciais no funcionamento dessa rotina?
 * [siconfi_rreo_query]('https://raw.githubusercontent.com/paulo-icaro/Siconfi_API'): realizar consultas aos dados disponíveis na API do Siconfi;
 * [value_updating](https://github.com/paulo-icaro/Update_Variables_Actual_Value): atualizar valores monetários para o período desejado.
@@ -56,6 +56,7 @@ editor: source
 # ----------------------------- #
 # --- Bibliotecas e Scripts --- #
 # ----------------------------- #
+library(tidyr)
 library(dplyr)
 library(stringr)
 library(readxl)
@@ -85,7 +86,7 @@ source('https://raw.githubusercontent.com/paulo-icaro/Update_Variables_Actual_Va
 * `esfera`: o nível governamental referente aos dados extraídos (ex: estadual)
 * `ente`: código referente ao ente federativo desejado (ex: Ceará = 23, Fortaleza = 2304400);
 
-|       Para os objetivos do projeto, foram acessados dados de caráter estadual e municipal. Além disso, pequenos ajustes foram implementados entre a extrações. Considerando que a base de dados contempla inicialmente o intervalo 2015-2025, uma extração de dados municipais do Ceará levaria bastante tempo para ser concluída. Para fins de exibição, esse intervalo foi reduzido para 2024-2025.
+|       Para os objetivos do projeto, foram acessados dados de caráter estadual e municipal. Além disso, pequenos ajustes foram implementados entre a extrações. Considerando que a base de dados contempla inicialmente o intervalo 2015-2025, uma extração de dados municipais do Ceará levaria bastante tempo para ser concluída. Para fins de exibição, esse intervalo foi reduzido para o ano de 2025.
 </p>
 
 ```{r}
@@ -95,9 +96,9 @@ source('https://raw.githubusercontent.com/paulo-icaro/Update_Variables_Actual_Va
 #| message: FALSE
 #| eval: TRUE
 
-state_municipalities = read_excel(path = 'C:/Users/paulo/Documents/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
+#state_municipalities = read_excel(path = 'C:/Users/paulo/Documents/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
 
-#state_municipalities = read_excel(path = '/home/pauloicaro/Documentos/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
+state_municipalities = read_excel(path = '/home/pauloicaro/Documentos/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/Lista_Municipios_Brasil.xlsx', sheet = 'Ceara')
 
 
 ```
@@ -121,8 +122,12 @@ tipo_demonstrativo = 'RREO'
 
 # --- Extracao --- #
 siconfi_dataset_est = siconfi_rreo_query(ano, bimestre, tipo_demonstrativo, c('01', '04', '06'), 'E', 23, TRUE)
-siconfi_dataset_mun = siconfi_rreo_query(2024:2025, bimestre, tipo_demonstrativo, c('01'), 'M', state_municipalities$`Cod. 7 Digitos`, TRUE)
+siconfi_dataset_mun = siconfi_rreo_query(2025:2025, bimestre, tipo_demonstrativo, c('01'), 'M', state_municipalities$`Cod. 7 Digitos`, TRUE)
 ```
+
+<p>
+Vejamos um recorte dos dados acessados:
+</p>
 
 ```{r}
 #| label: Extração - Prints
@@ -133,8 +138,7 @@ siconfi_dataset_mun = siconfi_rreo_query(2024:2025, bimestre, tipo_demonstrativo
 
 
 # --- Prints --- #
-tail(siconfi_dataset_est, n = 10)
-tail(siconfi_dataset_mun, n = 10)
+tail(siconfi_dataset_est[c(1, 2, 3, 9, 10, 11)], n = 10)
 ```
 
 <p>
@@ -157,6 +161,27 @@ Note que para a extração dos dados municipais foi necessário acessar uma plan
 
 |       Cada uma dessas variáveis possuem filtros devidamente aplicados para chegar nos valores iniciais, como pode ser visto a seguir.
 </p>
+
+```{r}
+#| label: Ajuste de Data - Parte 1
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+ajuste_data_siconfi = function(base){
+  
+  base = base %>%
+    mutate(data = 
+             as.Date(paste0(exercicio,
+                    case_when(periodo == 1 ~ '-02-01', 
+                              periodo == 2 ~ '-04-01',
+                              periodo == 3 ~ '-06-01',
+                              periodo == 4 ~ '-08-01',
+                              periodo == 5 ~ '-10-01',
+                              .default = '-12-01')), format = '%Y-%m-%d'))
+  return(base)
+}
+```
 
 ```{r}
 #| label: Seleção - Parte 1
@@ -188,6 +213,31 @@ investimento_municipal_bruto = ajuste_data_siconfi(siconfi_dataset_mun[c(1, 3, 5
 ```
 
 
+<p>
+|       É importante destacar a utilidade da função **ajuste_data_siconfi** criada especificamente para aplicar os ajustes no padrão de datas da base extraída.
+</p>
+
+
+```{r}
+#| label: Ajuste de Data - Parte 2
+#| echo: TRUE
+#| warning: FALSE
+#| message: FALSE
+#| eval: FALSE
+ajuste_data_siconfi = function(base){
+  
+  base = base %>%
+    mutate(data = 
+             as.Date(paste0(exercicio,
+                    case_when(periodo == 1 ~ '-02-01', 
+                              periodo == 2 ~ '-04-01',
+                              periodo == 3 ~ '-06-01',
+                              periodo == 4 ~ '-08-01',
+                              periodo == 5 ~ '-10-01',
+                              .default = '-12-01')), format = '%Y-%m-%d'))
+  return(base)
+}
+```
 
 ### Filtros Específicos
 <p>
@@ -248,9 +298,6 @@ investimento_municipal =
 
 
 # --- Prints --- #
-tail(resultado_previdenciario, n = 10)
-tail(divida_consolidada_liquida, n = 10)
-tail(resultado_primario, n = 10)
 tail(investimento_municipal, n = 10)
 ```
 
