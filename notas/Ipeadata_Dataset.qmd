@@ -1,5 +1,5 @@
 ---
-title: "Ipeadata Dataset"
+title: "Ipeadata Dataset (ASSET - SEFAZ CE)"
 author: Paulo Icaro
 format: 
   gfm: default  
@@ -53,9 +53,9 @@ editor: source
 #| eval: TRUE
 
 
-# ----------------------------- #
-# --- Bibliotecas e Scripts --- #
-# ----------------------------- #
+# ============================= #
+# === Bibliotecas e Scripts === #
+# ============================= #
 source('https://raw.githubusercontent.com/paulo-icaro/Variables_Frequency_Transforming/refs/heads/main/variables_frequency_transforming.R')
 source('https://raw.githubusercontent.com/paulo-icaro/Ipeadata_API/refs/heads/main/ipeadata_query.R')
 library(tidyr)
