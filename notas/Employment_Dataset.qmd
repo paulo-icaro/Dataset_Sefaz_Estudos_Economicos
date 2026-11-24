@@ -1,0 +1,293 @@
+---
+title: "Employment Dataset (ASSET - SEFAZ CE)"
+author: Paulo Icaro
+format: 
+  gfm: default  
+  pdf:
+    pdf-engine: pdflatex
+    header-includes: 
+    - \usepackage{fvextra}
+    - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}, fontsize=\small}
+  
+    - \usepackage{tcolorbox}
+    - \newtcolorbox{functioncard}{
+        colback=red!5,
+        colframe=red!70!black,
+        arc=2mm,
+        boxrule=0.8pt}
+  html:
+    css: stylesheet.css
+  
+date: "2026-11-21"
+editor: source
+---
+
+
+
+<!------------->
+<!-- Parte 1 -->
+<!------------->
+## Objetivo
+<p>
+|       Este tutorial mostra como é realizada o tratamento dos dados de mercado de trabalho no Estado do Ceará.  Esta etapa corresponde a parte final de refinamento do dos dados a serem utilizados no Tableau e Matlab.
+</p>
+
+
+
+<!------------->
+<!-- Parte 2 -->
+<!------------->
+## Bibliotecas e *Scripts* Auxiliares
+<p>
+|       Esta rotina faz uso das bibliotecas [tidyr](https://tidyr.tidyverse.org/) e [dplyr](https://dplyr.tidyverse.org/) para manipulações na base de dados e [readxl](https://readxl.tidyverse.org/) e [openxlsx](https://cran.r-project.org/web/packages/openxlsx/index.html) para modelagem de conjunto de dados e leitura/criação de arquivos Excel.
+|       Além das bibliotecas, os seguintes *scripts* são essenciais no funcionamento dessa rotina:
+* [cumulative_transform](https://github.com/paulo-icaro/Variables_Frequency_Transforming): converter a frequência de uma série de dados de acordo com a regra de agregação adequada.
+* [value_updating](https://github.com/paulo-icaro/Update_Variables_Actual_Value): atualizar valores monetários para o período desejado.</p>
+</p>
+
+```{r}
+#| label: Bibliotecas, Scripts e Base de Dados - Parte 1
+#| echo: TRUE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+# ============================= #
+# === Bibliotecas e Scripts === #
+# ============================= #
+source('https://raw.githubusercontent.com/paulo-icaro/Variables_Frequency_Transforming/refs/heads/main/variables_frequency_transforming.R')
+source('https://raw.githubusercontent.com/paulo-icaro/Update_Variables_Actual_Value/refs/heads/main/update_actual_value.R')
+library(dplyr)
+library(tidyr)
+library(readxl)
+library(openxlsx)
+
+# --- Path Auxiliar --- #
+path = 'Databases/Inputs/'
+
+# --- Bases Iniciais --- #
+#employments_macro = read_excel(path = paste0(path, 'empregos_ceara_macro.xlsx'))
+#employments_region = read_excel(path = paste0(path, 'empregos_ceara_regiao.xlsx'))
+```
+
+<p>
+|       A base de dados principal vem de planilhas que foram previamente tratadas^[Ver o repositório [Employments Ceará Sefaz](https://github.com/paulo-icaro/Employment_Ceara_Sefaz)]. Os dados refletem o quantitativo de empregos bem como o salário médio estimados para o Ceará e por região do Estado. Vejamos um recorte dos dados:
+</p>
+
+```{r}
+#| label: Bibliotecas, Scripts e Base de Dados - Parte 2
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+employments_macro =  read_excel(path = '/home/pauloicaro/Documentos/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/empregos_ceara_macro.xlsx')
+employments_region =  read_excel(path = '/home/pauloicaro/Documentos/Repositorios/Dataset_Sefaz_Estudos_Economicos/Databases/Inputs/empregos_ceara_regiao.xlsx')
+
+head(employments_macro, n = 10)
+```
+
+
+
+<!------------->
+<!-- Parte 2 -->
+<!------------->
+## Funções Específicas
+<p>
+|       Três funções extras foram elaboradas especificamente para essa rotina. Tais funções permite realizar análises tanto ao tipo de agregação `macro` quanto a agregação por `região`.
+|       As funções são:
+* **process_invest**: promove a agregação e sumariza a base de dados inicial de acordo com o nível de agregação desejado;
+* **bim_transform**: variação da função [**cumulative_transform**](https://github.com/paulo-icaro/Variables_Frequency_Transforming), onde é necessário inserir apenas o conjunto de dados a ter a frequência convertida e as variáveis de agregação a ser consideradas.
+* **pivotting**: função para adequar^[O adequamento é aplicado a base de dados por região.] a base de dados inicial ao formato matricial (necessário ao Matlab).
+</p>
+
+```{r}
+#| label: Funções Auxiliares
+#| echo: TRUE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+
+# ========================= #
+# === Funções Auxliares === #
+# ========================= #
+
+# ------------------------------------------ #
+# --- Processamento de Dados - Empregos ---- #
+# ------------------------------------------ #
+process_employments = function(df, group_var){
+  df |> 
+    mutate(data = as.Date(paste0(gsub('/', '-', periodo), '-01'))) %>%
+    select(all_of(group_var))
+}
+
+# ----------------------------------- #
+# --- Transformação de Frequência --- #
+# ----------------------------------- #
+bim_transform = function(df, transf_type, group_var = NULL){
+  cumulative_transform(
+    transform_type = transf_type,
+    frequency = 'bimestral',
+    dataset = df, 
+    groupby_variables = group_var)
+}
+
+# ------------------------------ #
+# --- Matricizacao dos Dados --- #
+# ------------------------------ #
+pivotting = function(df, var_names, values, preffix){
+  pivot_wider(df, names_from = var_names, values_from = values, names_prefix = preffix)
+}
+```
+
+
+
+<!------------->
+<!-- Parte 3 -->
+<!------------->
+## Processamento de Dados
+<p>
+|       Os seguintes procedimentos foram aplicados no refinamento do conjunto de dados:
+* **Agregação e Conversão de frequência**: a base de dados é inicialmente agregada de acordo com o escopo de agregação e na sequência os dados são "bimestralizados";
+* **"Matricização" dos Dados**: transformação da base para o padrão **matricial**;
+* **Junção das bases**: por através de técnicas de *join*, as bases de emprego e salário médio foram todas combinadas;
+* **Atualização dos valores monetários**:  todos os valores monetários foram atualizados para o período 2025/12;
+* **Concatenação da base em termos reais e nominais**: as bases reais e nominais foram combinadas, tendo agora uma variável categórica indicado se está sendo usado valor real ou nominal;
+* **Verticalização da base de dados**: os dados passam pelo processo de "verticalização" para atender aos padrões do Tableau.
+</p>
+
+```{r}
+#| label: Processamento - Parte 1
+#| echo: TRUE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+# ============================== #
+# === Processamento de Dados === #
+# ============================== #
+
+# ---------------------------------------------------- #
+# --- Processamentos e Transformação de Frequência --- #
+# ---------------------------------------------------- #
+employments_amount_macro_bim = bim_transform(df = process_employments(df = employments_macro, group_var = c('data', 'estoque_empregos')), transf_type = 'periodo_final')
+employments_amount_region_bim = bim_transform(df = process_employments(df = employments_region, group_var = c('data', 'regiao', 'estoque_empregos'))[c(1,2,3)], transf_type = 'periodo_final', group_var = 'regiao') 
+avg_wage_macro_bim = bim_transform(df = process_employments(df = employments_macro, group_var = c('data', 'salario_medio')), transf_type = 'media')
+avg_wage_region_bim = bim_transform(df = process_employments(df = employments_region, group_var = c('data', 'regiao', 'salario_medio')), transf_type = 'media', group_var = 'regiao')
+
+
+# ----------------------------- #
+# --- Matricizando os Dados --- #
+# ----------------------------- #
+employments_amount_macro_bim_m = employments_amount_macro_bim
+employments_amount_region_bim_m = pivotting(employments_amount_region_bim, 'regiao', 'estoque_empregos', 'empregos_')
+avg_wage_macro_bim_m = avg_wage_macro_bim
+avg_wage_region_bim_m = pivotting(avg_wage_region_bim, 'regiao', 'salario_medio', 's.medio_')
+
+
+# ------------------------- #
+# --- Reunido Variaveis --- #
+# ------------------------- #
+employments_macro_curr_bim_m = left_join(x = employments_amount_macro_bim_m, y = avg_wage_macro_bim_m, by = 'data')
+employments_region_curr_bim_m = left_join(x = employments_amount_region_bim_m, y = avg_wage_region_bim_m, by = 'data')
+
+
+# ----------------------------------------- #
+# --- Atualização de Valores Monetarios --- #
+# ----------------------------------------- #
+employments_macro_actual_bim_m = value_updating(employments_macro_curr_bim_m, colnames(select(employments_macro_curr_bim_m, !starts_with(c('data', 'estoque_empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+employments_region_actual_bim_m = value_updating(employments_region_curr_bim_m, colnames(select(employments_region_curr_bim_m, !starts_with(c('data', 'empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+
+
+# --------------------------------------------- #
+# --- Base Final - Valores Nominais e Reais --- #
+# --------------------------------------------- #
+employments_macro_bim_m = rbind(employments_macro_curr_bim_m |> mutate(tipo_preco = 'nominal'), employments_macro_actual_bim_m |> mutate(tipo_preco = 'real'))
+employments_region_bim_m = rbind(employments_region_curr_bim_m |> mutate(tipo_preco = 'nominal'), employments_region_actual_bim_m |> mutate(tipo_preco = 'real'))
+
+
+# ------------------------------- #
+# --- Verticalizando os Dados --- #
+# ------------------------------- #
+employments_macro_bim_t = pivot_longer(data = employments_macro_bim_m, cols = !starts_with((c('data', 'tipo_preco'))), names_to = 'variavel', values_to = 'valor')
+employments_region_bim_t = pivot_longer(data = employments_region_bim_m, cols = !starts_with(c('data', 'tipo_preco', 'regiao')), names_to = 'variavel', values_to = 'valor') |> separate(col = 'variavel', into = c('variavel', 'regiao'), sep = '_')
+``` 
+
+<p>
+|    A execução da rotina irá, portanto, gerar outputs para ambos os padrões de dados. Padrão Tableau:
+</p>
+
+```{r}
+#| label: Processamento - Parte 2
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+tail(employments_macro_bim_t, n = 10)
+```
+
+<p>
+e padrão Matlab:
+</p>
+
+```{r}
+#| label: Processamento - Parte 3
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+#| eval: TRUE
+
+tail(employments_macro_bim_m, n = 10)
+```
+
+
+
+<!------------->
+<!-- Parte 4 -->
+<!------------->
+## Armazenamento
+<p>
+|       Os resultados gerados são armazenados em dois diretórios distintos. Considerando o caminho base do diretório de armazenamento `Databases/Outputs/`, os resultados podem ser armazenados nas pastas *Tableau* ou *Matlab*  a depender do padrão do *output* gerado. Assim, para essa rotina, os *paths* de armazenamento serão `Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.
+|       Alguns itens são pré-definidos visado padronizar o armazenamento dos resultados nessa e em outras rotinas. Duas listas são criadas: **aba** e **dataframe**. Essas listas representam onde e quais dados serão armazenados. Essa parte é "editável" no script, sendo possível alternar de modo a atender ao que se deseja armazenar.
+|       Na etapa de armazenamento vale atentar que há uma distinção para o *output* gerado para Matlab. Uma aba adicional, nomeada **tempo** é acrescentada tendo em vista a necessidade das datas serem especificadas em padrão numérico^[O ajuste da data ao padrão numérico envolve a soma da coluna data do conjunto de dados com o número 25569. Esse último representa a data 01/01/1970, que é a data-início do calendário no R.] necessário ao software.
+</p>
+
+```{r}
+#| label: Armazenamento
+#| echo: TRUE
+#| warning: FALSE
+#| message: FALSE
+#| eval: FALSE
+
+# ==================================== #
+# === Armazenamento dos Resultados === #
+# ==================================== #
+
+# --- Pre Definicoes --- #
+save_path = c('Databases/Outputs/Tableau/db_empregos_tableau', 'Databases/Outputs/Matlab/db_empregos_matlab')
+formato = c('tableau', 'matlab')
+aba = list(
+  tableau = c('empregos_macro_bimestre', 'empregos_regiao_bimestre'),
+  matlab = c('empregos_macro_bimestre_real', 'empregos_regiao_bimestre_real')
+  )
+dataframe = list(
+  tableau = list(employments_macro_bim_t, employments_region_bim_t),
+  matlab = list(employments_macro_actual_bim_m, employments_region_actual_bim_m)
+)
+
+# --- Armazenamento --- #
+for(f in seq_along(formato)){
+  wb = createWorkbook(creator = 'Sefaz-CE')
+  for(s in seq_along(aba[[f]])){
+    addWorksheet(wb = wb, sheetName = aba[[f]][s])
+    writeData(wb = wb, sheet = aba[[f]][s], x = as.data.frame(dataframe[[f]][s]), rowNames = FALSE, colNames = TRUE)
+  }
+  if(formato[f] == 'matlab'){
+    addWorksheet(wb = wb, sheetName = 'tempo')
+    writeData(wb = wb, sheet = 'tempo', as.numeric(employments_region_actual_bim_m$data) + 25569, rowNames = FALSE)
+  }
+  saveWorkbook(wb = wb, file = paste0(save_path[f], '.xlsx'), overwrite = TRUE)
+}
+```

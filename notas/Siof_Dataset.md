@@ -55,7 +55,6 @@ library(dplyr)
 library(tidyr)
 library(readxl)
 library(openxlsx)
-library(lubridate)
 
 # --- Path Auxiliar --- #
 path = 'Databases/Inputs/'
@@ -68,9 +67,9 @@ path = 'Databases/Inputs/'
 <p>
 
       A base de dados principal vem de planilhas que foram previamente
-tratadas[^1]. Os dados refletem os Investimentos Públicos por Programa e
-Região e Investimentos Públicos por Função. Vejamos um recorte dos
-dados:
+tratadas[^1]. Os dados refletem os Investimentos Públicos por
+**Programa** e **região** e Investimentos Públicos por **função**.
+Vejamos um recorte dos dados:
 
 </p>
 
@@ -100,9 +99,9 @@ dados:
 <p>
 
       Três funções extras foram elaboradas especificamente para essa
-rotina. Elas permitem extender a análise aos diferentes tipos de
-agregação que podem ser considerado ao manipular os dados: `região`,
-`tipo` e `programa/função`.\
+rotina. Elas permitem extender, além da agregação `macro`, a análise aos
+diferentes tipos de agregação que podem ser considerado ao manipular os
+dados: `região`, `tipo` e `programa/função`.\
       As funções são:
 
 - **process_invest**: promove a agregação e sumariza a base de dados
@@ -112,7 +111,7 @@ agregação que podem ser considerado ao manipular os dados: `região`,
   onde é necessário inserir apenas o conjunto de dados a ter a
   frequência convertida e as variáveis de agregação a ser consideradas.
 - **pivotting**: função para adequar[^2] a base de dados inicial ao
-  formato matricial (necessário ao Matlab)
+  formato matricial (necessário ao Matlab).
 
 </p>
 
@@ -270,19 +269,26 @@ padrões de dados. Padrão Tableau:
 e padrão Matlab:
 </p>
 
-    # A tibble: 10 × 5
-       data       tipo_preco tipo  funcao                valor
-       <date>     <chr>      <chr> <chr>                 <dbl>
-     1 2025-12-01 real       PESSO HABITAÇÃO               NA 
-     2 2025-12-01 real       EQUIP PREVIDÊNCIA SOCIAL       0 
-     3 2025-12-01 real       OBRAS PREVIDÊNCIA SOCIAL      NA 
-     4 2025-12-01 real       PESSO TRABALHO            406183.
-     5 2025-12-01 real       TOTAL PREVIDÊNCIA SOCIAL       0 
-     6 2025-12-01 real       EQUIP DEFESA NACIONAL         NA 
-     7 2025-12-01 real       OBRAS DEFESA NACIONAL         NA 
-     8 2025-12-01 real       TOTAL DEFESA NACIONAL         NA 
-     9 2025-12-01 real       CORRE RELAÇÕES EXTERIORES      0 
-    10 2025-12-01 real       OBRAS ORGANIZAÇÃO AGRÁRIA      0 
+    # A tibble: 10 × 4,002
+       data       EQUIP_CARIRI_ABASTECIMENTO DE ÁGUA E ESGO…¹ EQUIP_CARIRI_ACESSO …²
+       <date>                                           <dbl>                  <dbl>
+     1 2024-06-01                                          NA                     NA
+     2 2024-08-01                                          NA                     NA
+     3 2024-10-01                                          NA                     NA
+     4 2024-12-01                                          NA                     NA
+     5 2025-02-01                                          NA                     NA
+     6 2025-04-01                                          NA                     NA
+     7 2025-06-01                                           0                     NA
+     8 2025-08-01                                           0                     NA
+     9 2025-10-01                                           0                     NA
+    10 2025-12-01                                           0                     NA
+    # ℹ abbreviated names:
+    #   ¹​`EQUIP_CARIRI_ABASTECIMENTO DE ÁGUA E ESGOTAMENTO SANITÁRIO NO MEIO RURAL`,
+    #   ²​`EQUIP_CARIRI_ACESSO E APRENDIZAGEM DAS CRIANÇAS E JOVENS NA IDADE ADEQUADA`
+    # ℹ 3,999 more variables:
+    #   `EQUIP_CARIRI_ATENÇÃO À SAÚDE INTEGRAL E DE QUALIDADE` <dbl>,
+    #   `EQUIP_CARIRI_CEARÁ MAIS VERDE` <dbl>,
+    #   `EQUIP_CARIRI_CONTROLE DISCIPLINAR DOS SISTEMAS DE SEGURANÇA PÚBLICA E PENITENCIÁRIO` <dbl>, …
 
 <!------------->
 
@@ -297,11 +303,18 @@ e padrão Matlab:
       Os resultados gerados são armazenados em dois diretórios
 distintos. Considerando o caminho base do diretório de armazenamento
 `Databases/Outputs/`, os resultados podem ser armazenados nas pastas
-*Tableau* ou *Matlab* a depender do padrão do *output* gerado.\
-      Assim, para essa rotina, os *paths* de armazenamento serão
-`Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.
-
-</p>
+*Tableau* ou *Matlab* a depender do padrão do *output* gerado. Assim,
+para essa rotina, os *paths* de armazenamento serão
+`Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.\
+      Alguns itens são pré-definidos visado padronizar o armazenamento
+dos resultados nessa e em outras rotinas. Duas listas são criadas:
+**aba** e **dataframe**. Essas listas representam onde e quais dados
+serão armazenados. Essa parte é “editável” no script, sendo possível
+alternar de modo a atender ao que se deseja armazenar.\
+      Na etapa de armazenamento vale atentar que há uma distinção para o
+*output* gerado para Matlab. Uma aba adicional, nomeada **tempo** é
+acrescentada tendo em vista a necessidade das datas serem especificadas
+em padrão numérico[^3] necessário ao software.
 
 ``` r
 # ==================================== #
@@ -344,3 +357,7 @@ for(f in seq_along(formato)){
 
 [^2]: A versão original da base de dados vem em um padrão que não é nem
     **matricial** e nem **vertical**
+
+[^3]: O ajuste da data ao padrão numérico envolve a soma da coluna data
+    do conjunto de dados com o número 25569. Esse último representa a
+    data 01/01/1970, que é a data-início do calendário no R.

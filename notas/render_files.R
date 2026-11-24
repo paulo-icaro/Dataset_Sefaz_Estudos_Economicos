@@ -15,7 +15,7 @@ library(quarto)
 # --- Renderização --- #
 # -------------------- #
 files = list.files(path = 'notas/', pattern = '\\.qmd$', ignore.case = TRUE, full.names = TRUE)
-files = files[c(1:3)]
+files = files[c(5)]
 formats = c('pdf', 'gfm')
 
 for (i in seq_along(files)){

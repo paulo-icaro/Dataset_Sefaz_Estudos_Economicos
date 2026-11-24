@@ -61,7 +61,6 @@ library(dplyr)
 library(tidyr)
 library(readxl)
 library(openxlsx)
-library(lubridate)
 
 # --- Path Auxiliar --- #
 path = 'Databases/Inputs/'
@@ -72,7 +71,7 @@ path = 'Databases/Inputs/'
 ```
 
 <p>
-|       A base de dados principal vem de planilhas que foram previamente tratadas^[Ver o repositório [Investimentos Públicos  Sefaz](https://github.com/paulo-icaro/Investimentos_Publicos_Sefaz)]. Os dados refletem os Investimentos Públicos por Programa e Região e Investimentos Públicos por Função. Vejamos um recorte dos dados:
+|       A base de dados principal vem de planilhas que foram previamente tratadas^[Ver o repositório [Investimentos Públicos  Sefaz](https://github.com/paulo-icaro/Investimentos_Publicos_Sefaz)]. Os dados refletem os Investimentos Públicos por **Programa** e **região** e Investimentos Públicos por **função**. Vejamos um recorte dos dados:
 </p>
 
 ```{r}
@@ -96,16 +95,15 @@ head(database_invest_programa_regiao, n = 10)
 <!------------->
 ## Funções Específicas
 <p>
-|       Três funções extras foram elaboradas especificamente para essa rotina. Elas permitem extender a análise aos diferentes tipos de agregação que podem ser considerado ao manipular os dados: `região`, `tipo` e `programa/função`.
+|       Três funções extras foram elaboradas especificamente para essa rotina. Elas permitem extender, além da agregação `macro`, a análise aos diferentes tipos de agregação que podem ser considerado ao manipular os dados: `região`, `tipo` e `programa/função`.
 |       As funções são:
 * **process_invest**: promove a agregação e sumariza a base de dados inicial de acordo com o nível de agregação desejado;
 * **bim_transform**: variação da função [**cumulative_transform**](https://github.com/paulo-icaro/Variables_Frequency_Transforming), onde é necessário inserir apenas o conjunto de dados a ter a frequência convertida e as variáveis de agregação a ser consideradas.
-* **pivotting**: função para adequar^[A versão original da base de dados vem em um padrão que não é nem **matricial** e nem **vertical**]
-a base de dados inicial ao formato matricial (necessário ao Matlab)
+* **pivotting**: função para adequar^[A versão original da base de dados vem em um padrão que não é nem **matricial** e nem **vertical**] a base de dados inicial ao formato matricial (necessário ao Matlab).
 </p>
 
 ```{r}
-#| label: Funçẽos Auxiliares
+#| label: Funções Auxiliares
 #| echo: TRUE
 #| warning: FALSE
 #| message: FALSE
@@ -144,7 +142,6 @@ bim_transform = function(df, group_var){
 pivotting = function(df, var_names = 'tipo', values = 'valor'){
   pivot_wider(df, names_from = var_names, values_from = values)
 }
-
 ```
 
 
@@ -256,7 +253,7 @@ e padrão Matlab:
 #| message: FALSE
 #| eval: TRUE
 
-tail(invest_funcao_tipo_funcao_bim_t, n = 10)
+tail(invest_programa_tipo_regiao_programa_bim_m, n = 10)
 ```
 
 
@@ -266,9 +263,9 @@ tail(invest_funcao_tipo_funcao_bim_t, n = 10)
 <!------------->
 ## Armazenamento
 <p>
-|       Os resultados gerados são armazenados em dois diretórios distintos. Considerando o caminho base do diretório de armazenamento `Databases/Outputs/`, os resultados podem ser armazenados nas pastas *Tableau* ou *Matlab*  a depender do padrão do *output* gerado.
-|       Assim, para essa rotina, os *paths* de armazenamento serão `Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.
-</p>
+|       Os resultados gerados são armazenados em dois diretórios distintos. Considerando o caminho base do diretório de armazenamento `Databases/Outputs/`, os resultados podem ser armazenados nas pastas *Tableau* ou *Matlab*  a depender do padrão do *output* gerado. Assim, para essa rotina, os *paths* de armazenamento serão `Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.
+|       Alguns itens são pré-definidos visado padronizar o armazenamento dos resultados nessa e em outras rotinas. Duas listas são criadas: **aba** e **dataframe**. Essas listas representam onde e quais dados serão armazenados. Essa parte é "editável" no script, sendo possível alternar de modo a atender ao que se deseja armazenar.
+|       Na etapa de armazenamento vale atentar que há uma distinção para o *output* gerado para Matlab. Uma aba adicional, nomeada **tempo** é acrescentada tendo em vista a necessidade das datas serem especificadas em padrão numérico^[O ajuste da data ao padrão numérico envolve a soma da coluna data do conjunto de dados com o número 25569. Esse último representa a data 01/01/1970, que é a data-início do calendário no R.] necessário ao software.</p>
 
 ```{r}
 #| label: Armazenamento

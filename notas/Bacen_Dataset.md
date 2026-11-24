@@ -290,11 +290,18 @@ e padrão Matlab:
       Os resultados gerados são armazenados em dois diretórios
 distintos. Considerando o caminho base do diretório de armazenamento
 `Databases/Outputs/`, os resultados podem ser armazenados nas pastas
-*Tableau* ou *Matlab* a depender do padrão do *output* gerado.\
-      Assim, para essa rotina, os *paths* de armazenamento serão
-`Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.
-
-</p>
+*Tableau* ou *Matlab* a depender do padrão do *output* gerado. Assim,
+para essa rotina, os *paths* de armazenamento serão
+`Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.\
+      Alguns itens são pré-definidos visado padronizar o armazenamento
+dos resultados nessa e em outras rotinas. Duas listas são criadas:
+**aba** e **dataframe**. Essas listas representam onde e quais dados
+serão armazenados. Essa parte é “editável” no script, sendo possível
+alternar de modo a atender ao que se deseja armazenar.\
+      Na etapa de armazenamento vale atentar que há uma distinção para o
+*output* gerado para Matlab. Uma aba adicional, nomeada **tempo** é
+acrescentada tendo em vista a necessidade das datas serem especificadas
+em padrão numérico[^1] necessário ao software.
 
 ``` r
 # ==================================== #
@@ -327,3 +334,7 @@ for(f in seq_along(formato)){
   saveWorkbook(wb = wb, file = paste0(save_path[f], '.xlsx'), overwrite = TRUE)
 }
 ```
+
+[^1]: O ajuste da data ao padrão numérico envolve a soma da coluna data
+    do conjunto de dados com o número 25569. Esse último representa a
+    data 01/01/1970, que é a data-início do calendário no R.
