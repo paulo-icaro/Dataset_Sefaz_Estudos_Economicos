@@ -28,9 +28,9 @@ employments_region = read_excel(path = paste0(path, 'empregos_ceara_regiao.xlsx'
 # === Funções Auxliares === #
 # ========================= #
 
-# ----------------------------------------------- #
-# --- Processamento de Dados - Investimentos ---- #
-# ----------------------------------------------- #
+# ------------------------------------------ #
+# --- Processamento de Dados - Empregos ---- #
+# ------------------------------------------ #
 process_employments = function(df, group_var){
   df |> 
     mutate(data = as.Date(paste0(gsub('/', '-', periodo), '-01'))) %>%
@@ -61,9 +61,9 @@ pivotting = function(df, var_names, values, preffix){
 # === Processamento de Dados === #
 # ============================== #
 
-# ----------------------------------- #
-# --- Transformação de Frequência --- #
-# ----------------------------------- #
+# ---------------------------------------------------- #
+# --- Processamentos e Transformação de Frequência --- #
+# ---------------------------------------------------- #
 employments_amount_macro_bim = bim_transform(df = process_employments(df = employments_macro, group_var = c('data', 'estoque_empregos')), transf_type = 'periodo_final')
 employments_amount_region_bim = bim_transform(df = process_employments(df = employments_region, group_var = c('data', 'regiao', 'estoque_empregos'))[c(1,2,3)], transf_type = 'periodo_final', group_var = 'regiao') 
 avg_wage_macro_bim = bim_transform(df = process_employments(df = employments_macro, group_var = c('data', 'salario_medio')), transf_type = 'media')

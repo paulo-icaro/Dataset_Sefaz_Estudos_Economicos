@@ -6,9 +6,9 @@
 
 
 
-# =================== #
-# === Bibliotecas === #
-# =================== #
+# ============================= #
+# === Bibliotecas e Scripts === #
+# ============================= #
 source('https://raw.githubusercontent.com/paulo-icaro/Variables_Frequency_Transforming/refs/heads/main/variables_frequency_transforming.R')
 source('https://raw.githubusercontent.com/paulo-icaro/Update_Variables_Actual_Value/refs/heads/main/update_actual_value.R')
 library(dplyr)
