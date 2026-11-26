@@ -44,7 +44,7 @@ monetários, é importante reajustá-los de acordo com a inflação. Para
 cada um dos procedimentos, respectivamente, as funções
 [**cumulative_transform**](https://github.com/paulo-icaro/Variables_Frequency_Transforming)
 e
-[**value_updating**](https://github.com/paulo-icaro/Update_Variables_Actual_Value)
+[**value_update**](https://github.com/paulo-icaro/Update_Variables_Actual_Value)
 são aplicadas.\
       Além dos tratamentos mencionados, a depender de como cada base de
 dados se apresenta, será necessário **“verticalizar”** ou
