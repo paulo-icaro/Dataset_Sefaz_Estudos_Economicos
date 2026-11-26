@@ -8,7 +8,6 @@ format:
     header-includes: 
     - \usepackage{fvextra}
     - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}, fontsize=\small}
-  
     - \usepackage{tcolorbox}
     - \newtcolorbox{functioncard}{
         colback=red!5,
