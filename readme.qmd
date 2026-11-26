@@ -48,7 +48,7 @@ editor: source
 <!-- Parte 2 -->
 <!------------->
 ## Tratamentos Implementados
-|       Apesar de distintos, os scripts possuem etapas estão presentes em quase todos os scripts. O fato da maioria dos dados ser de frequência mensal implica que o ajuste de frequência é necessário. Para valores monetários, é importante reajustá-los de acordo com a inflação. Para cada um dos procedimentos, respectivamente, as funções [**cumulative_transform**](https://github.com/paulo-icaro/Variables_Frequency_Transforming) e [**value_updating**](https://github.com/paulo-icaro/Update_Variables_Actual_Value) são aplicadas.
+|       Apesar de distintos, os scripts possuem etapas estão presentes em quase todos os scripts. O fato da maioria dos dados ser de frequência mensal implica que o ajuste de frequência é necessário. Para valores monetários, é importante reajustá-los de acordo com a inflação. Para cada um dos procedimentos, respectivamente, as funções [**cumulative_transform**](https://github.com/paulo-icaro/Variables_Frequency_Transforming) e [**value_update**](https://github.com/paulo-icaro/Update_Variables_Actual_Value) são aplicadas.
 |       Além dos tratamentos mencionados, a depender de como cada base de dados se apresenta, será necessário **"verticalizar"** ou **"matricizar"** as informações. Uma base de dados **matricial** é assim chamada quando cada coluna representa uma série temporal. Por outro lado, uma base de dados **vertical** ocorre quando as séries temporais passam a ser identificadas por meio de uma única coluna de nomes de séries e os valores ficam agrupados sob uma coluna de valores. 
 
 Vejamos uma base de dados no formato **matricial**:
