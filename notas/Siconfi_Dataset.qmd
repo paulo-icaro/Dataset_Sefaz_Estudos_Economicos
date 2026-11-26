@@ -41,7 +41,7 @@ editor: source
 <p>
 |       Esta rotina faz uso das bibliotecas [tidyr](https://tidyr.tidyverse.org/) e [dplyr](https://dplyr.tidyverse.org/) para manipulações na base de dados, [stringr](https://stringr.tidyverse.org/) para manipulação textual, [readxl](https://readxl.tidyverse.org/) e [openxlsx](https://cran.r-project.org/web/packages/openxlsx/index.html) para modelagem de conjunto de dados e leitura/criação de arquivos Excel.
 |       Além das bibliotecas, os seguintes *scripts* são essenciais no funcionamento dessa rotina:
-* [siconfi_rreo_query](https://raw.githubusercontent.com/paulo-icaro/Siconfi_API): realizar consultas aos dados disponíveis na API do Siconfi;
+* [siconfi_rreo_query](https://raw.githubusercontent.com/paulo-icaro/Siconfi_RREO_API): realizar consultas aos dados disponíveis na API do Siconfi;
 * [value_update](https://github.com/paulo-icaro/Update_Variables_Actual_Value): atualizar valores monetários para o período desejado.
 </p>
 

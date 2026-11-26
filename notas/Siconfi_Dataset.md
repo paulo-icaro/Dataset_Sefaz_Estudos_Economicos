@@ -39,7 +39,7 @@ Excel.\
       Além das bibliotecas, os seguintes *scripts* são essenciais no
 funcionamento dessa rotina:
 
-- [siconfi_rreo_query](https://raw.githubusercontent.com/paulo-icaro/Siconfi_API):
+- [siconfi_rreo_query](https://raw.githubusercontent.com/paulo-icaro/Siconfi_RREO_API):
   realizar consultas aos dados disponíveis na API do Siconfi;
 - [value_update](https://github.com/paulo-icaro/Update_Variables_Actual_Value):
   atualizar valores monetários para o período desejado.
