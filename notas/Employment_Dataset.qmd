@@ -1,5 +1,5 @@
 ---
-title: "Employment Dataset (ASSET - SEFAZ CE)"
+title: "Employment Dataset (Asset - Sefaz CE)"
 author: Paulo Icaro
 format: 
   gfm: default  
@@ -42,7 +42,7 @@ editor: source
 |       Esta rotina faz uso das bibliotecas [tidyr](https://tidyr.tidyverse.org/) e [dplyr](https://dplyr.tidyverse.org/) para manipulações na base de dados e [readxl](https://readxl.tidyverse.org/) e [openxlsx](https://cran.r-project.org/web/packages/openxlsx/index.html) para modelagem de conjunto de dados e leitura/criação de arquivos Excel.
 |       Além das bibliotecas, os seguintes *scripts* são essenciais no funcionamento dessa rotina:
 * [cumulative_transform](https://github.com/paulo-icaro/Variables_Frequency_Transforming): converter a frequência de uma série de dados de acordo com a regra de agregação adequada.
-* [value_updating](https://github.com/paulo-icaro/Update_Variables_Actual_Value): atualizar valores monetários para o período desejado.</p>
+* [value_update](https://github.com/paulo-icaro/Update_Variables_Actual_Value): atualizar valores monetários para o período desejado.</p>
 </p>
 
 ```{r}
@@ -196,8 +196,8 @@ employments_region_curr_bim_m = left_join(x = employments_amount_region_bim_m, y
 # ----------------------------------------- #
 # --- Atualização de Valores Monetarios --- #
 # ----------------------------------------- #
-employments_macro_actual_bim_m = value_updating(employments_macro_curr_bim_m, colnames(select(employments_macro_curr_bim_m, !starts_with(c('data', 'estoque_empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
-employments_region_actual_bim_m = value_updating(employments_region_curr_bim_m, colnames(select(employments_region_curr_bim_m, !starts_with(c('data', 'empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+employments_macro_actual_bim_m = value_update(employments_macro_curr_bim_m, colnames(select(employments_macro_curr_bim_m, !starts_with(c('data', 'estoque_empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+employments_region_actual_bim_m = value_update(employments_region_curr_bim_m, colnames(select(employments_region_curr_bim_m, !starts_with(c('data', 'empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
 
 
 # --------------------------------------------- #

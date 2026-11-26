@@ -1,4 +1,4 @@
-# Employment Dataset (ASSET - SEFAZ CE)
+# Employment Dataset (Asset - Sefaz CE)
 Paulo Icaro
 2026-11-21
 
@@ -42,7 +42,7 @@ funcionamento dessa rotina:
 - [cumulative_transform](https://github.com/paulo-icaro/Variables_Frequency_Transforming):
   converter a frequência de uma série de dados de acordo com a regra de
   agregação adequada.
-- [value_updating](https://github.com/paulo-icaro/Update_Variables_Actual_Value):
+- [value_update](https://github.com/paulo-icaro/Update_Variables_Actual_Value):
   atualizar valores monetários para o período desejado.
   </p>
 
@@ -215,8 +215,8 @@ employments_region_curr_bim_m = left_join(x = employments_amount_region_bim_m, y
 # ----------------------------------------- #
 # --- Atualização de Valores Monetarios --- #
 # ----------------------------------------- #
-employments_macro_actual_bim_m = value_updating(employments_macro_curr_bim_m, colnames(select(employments_macro_curr_bim_m, !starts_with(c('data', 'estoque_empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
-employments_region_actual_bim_m = value_updating(employments_region_curr_bim_m, colnames(select(employments_region_curr_bim_m, !starts_with(c('data', 'empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+employments_macro_actual_bim_m = value_update(employments_macro_curr_bim_m, colnames(select(employments_macro_curr_bim_m, !starts_with(c('data', 'estoque_empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+employments_region_actual_bim_m = value_update(employments_region_curr_bim_m, colnames(select(employments_region_curr_bim_m, !starts_with(c('data', 'empregos')))), base_period = '2025-12', start = '2015', show_price_index = FALSE)
 
 
 # --------------------------------------------- #

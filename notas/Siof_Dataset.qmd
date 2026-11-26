@@ -1,5 +1,5 @@
 ---
-title: "Siof Dataset (ASSET - SEFAZ CE)"
+title: "Siof Dataset (Asset - Sefaz CE)"
 author: Paulo Icaro
 format: 
   gfm: default  
@@ -42,7 +42,7 @@ editor: source
 |       Esta rotina faz uso das bibliotecas [tidyr](https://tidyr.tidyverse.org/) e [dplyr](https://dplyr.tidyverse.org/) para manipulações na base de dados e [readxl](https://readxl.tidyverse.org/) e [openxlsx](https://cran.r-project.org/web/packages/openxlsx/index.html) para modelagem de conjunto de dados e leitura/criação de arquivos Excel.
 |       Além das bibliotecas, os seguintes *scripts* são essenciais no funcionamento dessa rotina:
 * [cumulative_transform](https://github.com/paulo-icaro/Variables_Frequency_Transforming): converter a frequência de uma série de dados de acordo com a regra de agregação adequada.
-* [value_updating](https://github.com/paulo-icaro/Update_Variables_Actual_Value): atualizar valores monetários para o período desejado.
+* [value_update](https://github.com/paulo-icaro/Update_Variables_Actual_Value): atualizar valores monetários para o período desejado.
 </p>
 
 ```{r}
@@ -197,13 +197,13 @@ invest_funcao_tipo_funcao_curr_bim_m             = pivotting(invest_funcao_tipo_
 # ----------------------------------------- #
 # --- Atualizacao de Valores Monetarios --- #
 # ----------------------------------------- #
-invest_programa_tipo_actual_bim_m                 = value_updating(series = invest_programa_tipo_curr_bim_m, variables = colnames(select(invest_programa_tipo_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
-invest_programa_regiao_actual_bim_m               = value_updating(series = invest_programa_regiao_curr_bim_m, variables = colnames(select(invest_programa_regiao_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
-invest_programa_tipo_regiao_actual_bim_m          = value_updating(series = invest_programa_tipo_regiao_curr_bim_m, variables = colnames(select(invest_programa_tipo_regiao_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
-invest_programa_tipo_regiao_programa_actual_bim_m = value_updating(series = invest_programa_tipo_regiao_programa_curr_bim_m, variables = colnames(select(invest_programa_tipo_regiao_programa_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
-invest_funcao_tipo_actual_bim_m                   = value_updating(series = invest_funcao_tipo_curr_bim_m, variables = colnames(select(invest_funcao_tipo_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
-invest_funcao_funcao_actual_bim_m                 = value_updating(series = invest_funcao_funcao_curr_bim_m, variables = colnames(select(invest_funcao_funcao_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
-invest_funcao_tipo_funcao_actual_bim_m            = value_updating(series = invest_funcao_tipo_funcao_curr_bim_m, variables = colnames(select(invest_funcao_tipo_funcao_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+invest_programa_tipo_actual_bim_m                 = value_update(series = invest_programa_tipo_curr_bim_m, variables = colnames(select(invest_programa_tipo_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+invest_programa_regiao_actual_bim_m               = value_update(series = invest_programa_regiao_curr_bim_m, variables = colnames(select(invest_programa_regiao_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+invest_programa_tipo_regiao_actual_bim_m          = value_update(series = invest_programa_tipo_regiao_curr_bim_m, variables = colnames(select(invest_programa_tipo_regiao_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+invest_programa_tipo_regiao_programa_actual_bim_m = value_update(series = invest_programa_tipo_regiao_programa_curr_bim_m, variables = colnames(select(invest_programa_tipo_regiao_programa_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+invest_funcao_tipo_actual_bim_m                   = value_update(series = invest_funcao_tipo_curr_bim_m, variables = colnames(select(invest_funcao_tipo_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+invest_funcao_funcao_actual_bim_m                 = value_update(series = invest_funcao_funcao_curr_bim_m, variables = colnames(select(invest_funcao_funcao_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+invest_funcao_tipo_funcao_actual_bim_m            = value_update(series = invest_funcao_tipo_funcao_curr_bim_m, variables = colnames(select(invest_funcao_tipo_funcao_curr_bim_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
 
 # --------------------------------------------- #
 # --- Base Final - Valores Nominais e Reais --- #

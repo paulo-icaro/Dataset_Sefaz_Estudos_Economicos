@@ -1,5 +1,5 @@
 ---
-title: "Bacen Dataset (ASSET - SEFAZ CE)"
+title: "Bacen Dataset (Asset - Sefaz CE)"
 author: Paulo Icaro
 format: 
   gfm: default  
@@ -8,7 +8,6 @@ format:
     header-includes: 
     - \usepackage{fvextra}
     - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}, fontsize=\small}
-  
     - \usepackage{tcolorbox}
     - \newtcolorbox{functioncard}{
         colback=red!5,
@@ -43,7 +42,7 @@ editor: source
 |       Além das bibliotecas, os seguintes *scripts* são fundamentais para o funcionamento dessa rotina:
 * [bacen_query](https://github.com/paulo-icaro/Bacen_API/blob/main/readme_pt_br.md): realizar consultas aos dados disponíveis na API do Banco Central;
 * [cumulative_transform](https://github.com/paulo-icaro/Variables_Frequency_Transforming): converter a frequência de uma série de dados de acordo com a regra de agregação adequada.
-* [value_updating](https://github.com/paulo-icaro/Update_Variables_Actual_Value): atualizar valores monetários para o período desejado.
+* [value_update](https://github.com/paulo-icaro/Update_Variables_Actual_Value): atualizar valores monetários para o período desejado.
 </p>
 
 ```{r}
@@ -181,11 +180,11 @@ bacen_dataset_bimonthly_curr_m = left_join(x = bacen_dataset_bimonthly_curr_m, y
 # --- Atualizacao de Valores Monetarios --- #
 # ----------------------------------------- #
 bacen_dataset_actual_m = 
-  value_updating(series = bacen_dataset_curr_m, variables = c('export', 'import', 'cred_pf', 'cred_pj', 'saldo_oper_cred'),
+  value_update(series = bacen_dataset_curr_m, variables = c('export', 'import', 'cred_pf', 'cred_pj', 'saldo_oper_cred'),
                  base_period = '2025-12', start = '2014', show_price_index = FALSE)
 
 bacen_dataset_bimonthly_actual_m =
-  value_updating(series = bacen_dataset_bimonthly_curr_m, variables = c('export', 'import', 'cred_pf', 'cred_pj', 'saldo_oper_cred'),
+  value_update(series = bacen_dataset_bimonthly_curr_m, variables = c('export', 'import', 'cred_pf', 'cred_pj', 'saldo_oper_cred'),
                  base_period = '2025-12', start = '2014', show_price_index = FALSE)
 
 

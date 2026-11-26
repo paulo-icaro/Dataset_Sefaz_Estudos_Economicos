@@ -1,4 +1,4 @@
-# Siconfi Dataset
+# Siconfi Dataset (Asset - Sefaz CE)
 Paulo Icaro
 2026-11-11
 
@@ -12,9 +12,9 @@ Paulo Icaro
 
 <p>
 
-      Este tutorial mostra como é realizada a extração e tratamento das
-variáveis disponíveis na
-[API](https://apidatalake.tesouro.gov.br/docs/siconfi/) do Siconfi.
+      Este tutorial mostra como é realizado o tratamento dos dados de
+investimentos públicos no Estado do Ceará. Esta etapa é a parte final de
+refinamento do conjunto de dados a serem utilizados no Tableau e Matlab.
 
 </p>
 
@@ -37,11 +37,11 @@ textual, [readxl](https://readxl.tidyverse.org/) e
 para modelagem de conjunto de dados e leitura/criação de arquivos
 Excel.\
       Além das bibliotecas, os seguintes *scripts* são essenciais no
-funcionamento dessa rotina?
+funcionamento dessa rotina:
 
-- [siconfi_rreo_query]('https://raw.githubusercontent.com/paulo-icaro/Siconfi_API'):
+- [siconfi_rreo_query](https://raw.githubusercontent.com/paulo-icaro/Siconfi_API):
   realizar consultas aos dados disponíveis na API do Siconfi;
-- [value_updating](https://github.com/paulo-icaro/Update_Variables_Actual_Value):
+- [value_update](https://github.com/paulo-icaro/Update_Variables_Actual_Value):
   atualizar valores monetários para o período desejado.
 
 </p>
@@ -316,7 +316,7 @@ siconfi_macro_bimonthly_curr_m =
 # ----------------------------------------- #
 # --- Atualizacao de Valores Monetarios --- #
 # ----------------------------------------- #
-siconfi_macro_bimonthly_actual_m = value_updating(series = siconfi_macro_bimonthly_curr_m, variables = colnames(select(siconfi_macro_bimonthly_curr_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
+siconfi_macro_bimonthly_actual_m = value_update(series = siconfi_macro_bimonthly_curr_m, variables = colnames(select(siconfi_macro_bimonthly_curr_m, -data)), base_period = '2025-12', start = '2015', show_price_index = FALSE)
 
 # --------------------------------------------- #
 # --- Base Final - Valores Nominais e Reais --- #
@@ -382,11 +382,18 @@ e padrão Matlab:
       Os resultados gerados são armazenados em dois diretórios
 distintos. Considerando o caminho base do diretório de armazenamento
 `Databases/Outputs/`, os resultados podem ser armazenados nas pastas
-*Tableau* ou *Matlab* a depender do padrão do *output* gerado.\
-      Assim, para essa rotina, os *paths* de armazenamento serão
-`Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.
-
-</p>
+*Tableau* ou *Matlab* a depender do padrão do *output* gerado. Assim,
+para essa rotina, os *paths* de armazenamento serão
+`Databases/Outputs/Tableau` e `Databases/Outputs/Matlab`.\
+      Alguns itens são pré-definidos visado padronizar o armazenamento
+dos resultados nessa e em outras rotinas. Duas listas são criadas:
+**aba** e **dataframe**. Essas listas representam onde e quais dados
+serão armazenados. Essa parte é “editável” no script, sendo possível
+alternar de modo a atender ao que se deseja armazenar.\
+      Na etapa de armazenamento vale atentar que há uma distinção para o
+*output* gerado para Matlab. Uma aba adicional, nomeada **tempo** é
+acrescentada tendo em vista a necessidade das datas serem especificadas
+em padrão numérico[^2] necessário ao software.
 
 ``` r
 # ==================================== #
@@ -421,3 +428,7 @@ for(f in seq_along(formato)){
     razão da maneira como essa documentação foi montada. No entanto ao
     executar em sua máquina, basta remover o comentário e tudo
     funcionará normalmente.
+
+[^2]: O ajuste da data ao padrão numérico envolve a soma da coluna data
+    do conjunto de dados com o número 25569. Esse último representa a
+    data 01/01/1970, que é a data-início do calendário no R.

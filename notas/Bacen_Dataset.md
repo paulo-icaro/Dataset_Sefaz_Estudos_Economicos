@@ -1,4 +1,4 @@
-# Bacen Dataset (ASSET - SEFAZ CE)
+# Bacen Dataset (Asset - Sefaz CE)
 Paulo Icaro
 2026-11-09
 
@@ -42,7 +42,7 @@ o funcionamento dessa rotina:
 - [cumulative_transform](https://github.com/paulo-icaro/Variables_Frequency_Transforming):
   converter a frequência de uma série de dados de acordo com a regra de
   agregação adequada.
-- [value_updating](https://github.com/paulo-icaro/Update_Variables_Actual_Value):
+- [value_update](https://github.com/paulo-icaro/Update_Variables_Actual_Value):
   atualizar valores monetários para o período desejado.
 
 </p>
@@ -204,11 +204,11 @@ bacen_dataset_bimonthly_curr_m = left_join(x = bacen_dataset_bimonthly_curr_m, y
 # --- Atualizacao de Valores Monetarios --- #
 # ----------------------------------------- #
 bacen_dataset_actual_m = 
-  value_updating(series = bacen_dataset_curr_m, variables = c('export', 'import', 'cred_pf', 'cred_pj', 'saldo_oper_cred'),
+  value_update(series = bacen_dataset_curr_m, variables = c('export', 'import', 'cred_pf', 'cred_pj', 'saldo_oper_cred'),
                  base_period = '2025-12', start = '2014', show_price_index = FALSE)
 
 bacen_dataset_bimonthly_actual_m =
-  value_updating(series = bacen_dataset_bimonthly_curr_m, variables = c('export', 'import', 'cred_pf', 'cred_pj', 'saldo_oper_cred'),
+  value_update(series = bacen_dataset_bimonthly_curr_m, variables = c('export', 'import', 'cred_pf', 'cred_pj', 'saldo_oper_cred'),
                  base_period = '2025-12', start = '2014', show_price_index = FALSE)
 
 

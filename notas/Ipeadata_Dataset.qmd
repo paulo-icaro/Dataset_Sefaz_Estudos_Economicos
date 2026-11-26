@@ -1,5 +1,5 @@
 ---
-title: "Ipeadata Dataset (ASSET - SEFAZ CE)"
+title: "Ipeadata Dataset (Asset - Sefaz CE)"
 author: Paulo Icaro
 format: 
   gfm: default  
